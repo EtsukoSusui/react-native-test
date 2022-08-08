@@ -15,11 +15,14 @@
    View,
    Text,
    StyleSheet,
-   TouchableOpacity
+   TouchableOpacity,
+   Button
  } from 'react-native';
- 
-import { MyTest } from './Mytest';
+ import { MyTest } from './Mytest';
 
+ let colors:string[][] = [['#64170b',"#e4a17f"], ['#66236c',"#f0bdd9"],['#044a3c',"#6fecc3"],['#2d1062',"#ddc4f1"]]
+ type Data = {key:string, name:string, colors:string[], radius:number}[] | null
+ 
  const App = () => {
    const values=["Topics","Maps"]
    const backgroundStyle = {
@@ -27,53 +30,71 @@ import { MyTest } from './Mytest';
    };
    const [selectedValue, setSelectedValue] = useState("Topics");
    const [draggable, setscrollable] = useState(false);
+   const [data, setData] = useState<Data>(null);
+
+   const handleAddnew = () =>{
+    let radius:number = 80 + Math.random() * 120;
+    if(data)
+    {
+      setData([{name:(data?.length + 1).toString(),key:(data?.length + 1).toString(), colors:colors[data?.length % 4],radius:radius}, ...data])
+    }
+    else{
+      setData([{name:"1",key:"1", colors:colors[0],radius:radius}])
+    }
+    
+   }
+
    return (
-     <SafeAreaView style={backgroundStyle}>
-       <ScrollView
-          scrollEnabled={!draggable}
-          contentInsetAdjustmentBehavior="automatic"
-          style={backgroundStyle}>
-           <View style={{ padding: 10, flex: 1 }}>
-           <Text style={styles.label}>{draggable?"Yes":"No"}</Text>
-           <View style={[styles.row]}>
-             {values.map((value) => (
-               <TouchableOpacity
-                 key={value}
-                 onPress={() => setSelectedValue(value)}
-                 style={[
-                   styles.button,
-                   selectedValue === value && styles.selected,
-                 ]}
-               >
-                 <Text
-                   style={[
-                     styles.buttonLabel,
-                     selectedValue === value &&
-                       styles.selectedLabel,
-                   ]}
-                 >
-                   {value}
-                 </Text>
-               </TouchableOpacity>
-             ))}
-           </View>
-           <View style={styles.container}>
-              <MyTest setscrollable={setscrollable}/>
-           </View>
-         </View>
-         
-       </ScrollView>
-     </SafeAreaView>
+    <View style={styles.main}>
+      <SafeAreaView style={backgroundStyle}>
+        <Button
+            onPress={handleAddnew}
+            title="Add new topic"
+          />
+          <Text style={styles.label}>My Last Summer</Text>
+            <View style={[styles.row]}>
+              {values.map((value) => (
+                <TouchableOpacity
+                  key={value}
+                  onPress={() => setSelectedValue(value)}
+                  style={[
+                    styles.button,
+                    selectedValue === value && styles.selected,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.buttonLabel,
+                      selectedValue === value &&
+                        styles.selectedLabel,
+                    ]}
+                  >
+                    {value}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <ScrollView
+                scrollEnabled={!draggable}
+                contentInsetAdjustmentBehavior="automatic"
+                style={backgroundStyle}>
+                <View style={styles.container}>
+                    {data && <MyTest setscrollable={setscrollable} data={data} setData={setData}/>}
+                </View>
+            </ScrollView>
+      </SafeAreaView>
+     </View>
    );
  };
  
  const styles = StyleSheet.create({
-  
+   main:{
+     backgroundColor:"#000000",
+     flex:0,
+     minHeight:"100%"
+   },
    container: {
-     flex: 1,
-     marginTop: 8,
      backgroundColor: "#000000",
-     minHeight: 200,
    },
    box: {
      width: 50,
