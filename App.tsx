@@ -18,10 +18,10 @@
    TouchableOpacity,
    Button
  } from 'react-native';
- import { MyTest } from './Mytest';
+ import { MyTest } from './component/Mytest';
 
  let colors:string[][] = [['#64170b',"#e4a17f"], ['#66236c',"#f0bdd9"],['#044a3c',"#6fecc3"],['#2d1062',"#ddc4f1"]]
- type Data = {key:string, name:string, colors:string[], radius:number}[] | null
+ type Data = {key:string, name:string, colors:string[], radius:number, image:any}[] | null
  
  const App = () => {
    const values=["Topics","Maps"]
@@ -33,15 +33,29 @@
    const [data, setData] = useState<Data>(null);
 
    const handleAddnew = () =>{
-    let radius:number = 80 + Math.random() * 120;
+    let radius:number = 50 + Math.random() * 80;
     if(data)
     {
-      setData([{name:(data?.length + 1).toString(),key:(data?.length + 1).toString(), colors:colors[data?.length % 4],radius:radius}, ...data])
+      switch(data?.length % 3)
+      {
+        case 2:{
+          setData([{name:(data?.length + 1).toString(),key:(data?.length + 1).toString(), colors:colors[data?.length % 4],radius:radius, image:require('./1.jpg')}, ...data])
+          break
+        }
+        case 0:{
+          setData([{name:(data?.length + 1).toString(),key:(data?.length + 1).toString(), colors:colors[data?.length % 4],radius:radius, image:require('./2.jpg')}, ...data])
+          break
+        }
+        case 1:{
+          setData([{name:(data?.length + 1).toString(),key:(data?.length + 1).toString(), colors:colors[data?.length % 4],radius:radius, image:require('./3.jpg')}, ...data])
+          break
+        }
+      }
     }
     else{
-      setData([{name:"1",key:"1", colors:colors[0],radius:radius}])
+       
+      setData([{name:"1",key:"1", colors:colors[0],radius:radius,image:require('./1.jpg')}])
     }
-    
    }
 
    return (
@@ -51,36 +65,37 @@
             onPress={handleAddnew}
             title="Add new topic"
           />
-          <Text style={styles.label}>My Last Summer</Text>
-            <View style={[styles.row]}>
-              {values.map((value) => (
-                <TouchableOpacity
-                  key={value}
-                  onPress={() => setSelectedValue(value)}
-                  style={[
-                    styles.button,
-                    selectedValue === value && styles.selected,
-                  ]}
-                >
-                  <Text
+           <ScrollView
+              scrollEnabled={!draggable}
+              contentInsetAdjustmentBehavior="automatic"
+              style={backgroundStyle}
+           >
+              <Text style={styles.label}>My Last Summer</Text>
+              <View style={[styles.row]}>
+                {values.map((value) => (
+                  <TouchableOpacity
+                    key={value}
+                    onPress={() => setSelectedValue(value)}
                     style={[
-                      styles.buttonLabel,
-                      selectedValue === value &&
-                        styles.selectedLabel,
+                      styles.button,
+                      selectedValue === value && styles.selected,
                     ]}
                   >
-                    {value}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-            <ScrollView
-                scrollEnabled={!draggable}
-                contentInsetAdjustmentBehavior="automatic"
-                style={backgroundStyle}>
-                <View style={styles.container}>
+                    <Text
+                      style={[
+                        styles.buttonLabel,
+                        selectedValue === value &&
+                          styles.selectedLabel,
+                      ]}
+                    >
+                      {value}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <View style={styles.container}>
                     {data && <MyTest setscrollable={setscrollable} data={data} setData={setData}/>}
-                </View>
+              </View>
             </ScrollView>
       </SafeAreaView>
      </View>
